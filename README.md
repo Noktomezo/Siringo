@@ -1,5 +1,5 @@
 <div style="text-align:center"> 
-    <img src="assets/siringo-thumbnail.svg" />
+    <img src="assets/siringo-thumbnail.png" />
 </div>
 
 
