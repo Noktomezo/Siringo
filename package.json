@@ -1,8 +1,8 @@
 {
     "name": "siringo-discord-bot",
-    "version": "3.0.436834",
-    "description": "",
-    "main": "index.js",
+    "version": "0.0.1",
+    "description": "Powerful discord bot with automoderation, reaction roles, multilanguage support and more",
+    "main": "dist/index.js",
     "type": "module",
     "scripts": {
         "start": "node build/index.js",
@@ -11,7 +11,7 @@
         "schema:gen": "npx -y quicktype src/locales/en-US.json --top-level Locale -o src/locale-types.ts --just-types"
     },
     "keywords": [],
-    "author": "",
+    "author": "Noktomezo <noktomezo@duck.com>",
     "license": "ISC",
     "dependencies": {
         "@discordjs/voice": "^0.14.0",
