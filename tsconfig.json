@@ -1,0 +1,25 @@
+{
+    "ts-node": {
+        "swc": true,
+        "esm": true,
+        "experimentalResolverFeatures": true
+    },
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "outDir": "dist",
+        "removeComments": true,
+        "importHelpers": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "moduleDetection": "auto",
+        "strict": true,
+        "useUnknownInCatchVariables": true,
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
+}

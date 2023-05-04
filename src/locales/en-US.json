@@ -1,0 +1,20 @@
+{
+    "events": {
+        "ready": {
+            "loggedIn": "Successfully logged in as {BOT_TAG}"
+        }
+    },
+    "commands": {
+        "reactionRole": {
+            "description": "Attach a reaction to the message, on clicking on which a certain role will be given",
+            "invalidMessageId": "The specified ID **{MESSAGE_ID}** does not belong to any message in this channel",
+            "success": "The role {ROLE} that will be given by clicking on the reaction {EMOJI} has been successfully attached to the message with the ID **{MESSAGE_ID}**"
+        }
+    },
+    "declensions": {
+        "/*explanation-1*/": "There must be three declensions in the following order: ",
+        "/*explanation-2*/": "One Nominative, Several Genitive, Several Nominative",
+        "/*explanation-3*/": "Example: 1 guild, 10 guilds, 2 guilds",
+        "guild": ["guild", "guilds", "guilds"]
+    }
+}
