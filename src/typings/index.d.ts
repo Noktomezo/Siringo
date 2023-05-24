@@ -1,21 +1,29 @@
-import type { ChatInputApplicationCommandData, ChatInputCommandInteraction, ClientOptions } from 'discord.js'
-
+import type {
+    ChatInputCommandInteraction,
+    ClientOptions,
+    Snowflake,
+    ChatInputApplicationCommandData,
+    InteractionReplyOptions
+} from 'discord.js'
 import type { Siringo } from '../core/Siringo.js'
-import { Locale } from './locale.js'
 
 export interface ISiringoOptions extends ClientOptions {
     defaultLocale: string
+    defaultPrefix: string
     mongoURL: string
 }
 
 export interface ICommandRunOptions {
     client: Siringo
     interaction: ChatInputCommandInteraction
-    locale: Locale
+    respond: TRespondFunction
+    settings: ICustomGuildSettings
+    translate: TTranslateFunction
 }
 
 export interface ICommand extends ChatInputApplicationCommandData {
-    run: (options: ICommandRunOptions) => void
+    category: string
+    run(options: ICommandRunOptions): Promise<void>
 }
 
 export interface ICommandBuildOptions {
@@ -23,23 +31,30 @@ export interface ICommandBuildOptions {
 }
 
 export interface IReactionRoleOptions {
-    type: number
-    roleId: string
+    channelId: Snowflake
     emojiId: string
-    messageId: string
+    messageId: Snowflake
+    roleId: Snowflake
+    type: number
 }
 
 export interface IPrivateChannelOptions {
-    name: string
     id: string
+    name: string
 }
 
-export interface ICustomGuildOptions {
-    locale: Locale
-    reactionRoles: IReactionRoleOptions[]
+export interface ICustomGuildSettings {
+    locale: string
     privateChannels: IPrivateChannelOptions[]
+    reactionRoles: IReactionRoleOptions[]
 }
 
 export type TCommandBuilder = (buildOptions: ICommandBuildOptions) => ICommand
 
-export type TEvent = (client: Siringo, ...args: unknown[]) => void
+export type TEventFunction = (client: Siringo, ...args: unknown[]) => Promise<void>
+
+export type TLocale = Record<string, string>
+
+export type TTranslateFunction = (localeKey: string) => string
+
+export type TRespondFunction = (data: InteractionReplyOptions, timeout?: number) => Promise<void>

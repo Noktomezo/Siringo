@@ -1,47 +1,48 @@
-import { Siringo } from '../Siringo.js'
-import { ActivitiesOptions, PresenceData, PresenceStatusData } from 'discord.js'
+import type { ActivitiesOptions, PresenceData, PresenceStatusData } from 'discord.js'
+import type { Siringo } from '../Siringo.js'
 
 export class PresenceManager {
-    private presences: Omit<PresenceData, 'shardId'>[]
+    private readonly presences: Omit<PresenceData, 'shardId'>[]
 
-    constructor(public client: Siringo) {
+    public constructor(public client: Siringo) {
         this.presences = []
     }
 
-    add(status: PresenceStatusData, activity: ActivitiesOptions) {
+    public add(status: PresenceStatusData, activity: ActivitiesOptions) {
         return this.presences.push({ activities: [activity], status })
     }
 
-    async update(presence: PresenceData) {
+    public async update(presence: PresenceData) {
         const isActivityValid = presence?.activities?.length && presence.activities[0].name
         if (!isActivityValid) return
 
         const guilds = await this.client.guilds.fetch()
-        const guildDeclensions = this.client.locales.default!.declensions.guild
+        const guildDeclensions = this.client.locales
+            .get('DECLENSION_GUILDS', this.client.locales.defaultLocale)
+            .split(':')
         const guildDeclension = this.client.utils.declension(guilds.size, guildDeclensions)
-        const name = presence.activities![0]!.name!.replace('{GUILDS}', `${guilds.size.toString()} ${guildDeclension}`)
+        const name = presence.activities![0].name!.replace('{GUILDS}', `${guilds.size.toString()} ${guildDeclension}`)
 
         return this.client.user.presence.set({ ...presence, activities: [{ name }] })
     }
 
-    setUpdateLoop(ms: number) {
+    public async setUpdateLoop(ms: number = 5_000) {
         if (!this.presences.length) return
-        this.update(this.presences[0])
+        await this.update(this.presences[0])
 
         if (this.presences.length < 2) return
-        if (ms < 5000) ms = 5000
 
-        let i = 1
+        let index = 1
         const interval = setInterval(async () => {
-            if (i == this.presences.length) i = 0
+            if (index === this.presences.length) index = 0
 
-            const presence = this.presences.at(i)
+            const presence = this.presences.at(index)
 
             if (!presence) clearInterval(interval)
 
-            this.update(presence!)
+            await this.update(presence!)
 
-            i++
+            index++
         }, ms)
     }
 }

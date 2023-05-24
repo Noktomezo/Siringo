@@ -1,18 +1,15 @@
-import { existsSync, lstatSync, readdirSync } from 'node:fs'
+import { existsSync, lstatSync, readdirSync, statSync } from 'node:fs'
 import { extname, join } from 'node:path'
-import { ICommand, ICustomGuildOptions, TCommandBuilder, TEvent } from '../../typings/index.js'
-
-import { statSync } from 'fs'
-import { pathToFileURL } from 'url'
-import { Siringo } from '../Siringo.js'
-import { Database } from './Database.js'
+import { pathToFileURL } from 'node:url'
+import type { ICommand, TCommandBuilder, TEventFunction } from '../../typings/index.js'
+import type { Siringo } from '../Siringo.js'
+import type { Database } from './Database.js'
 
 export class Handler {
-    constructor(public client: Siringo) {}
+    public constructor(public client: Siringo) {}
 
-    async handleCommands(commandsFolder: string) {
+    public async handleCommands(commandsFolder: string) {
         if (!this._isFolderValid(commandsFolder)) return
-        await this.client.application.commands.set([])
 
         for (const categoryFolder of readdirSync(commandsFolder)) {
             const categoryFolderPath = join(commandsFolder, categoryFolder)
@@ -26,29 +23,19 @@ export class Handler {
                 const { buildCommand }: { buildCommand: TCommandBuilder } = await import(commandFileURL)
                 const command = buildCommand({ client: this.client })
                 if (!this._isCommandValid(command)) return
-                
+
                 const commandName = command.name ?? commandFile.split('.')[0]
 
-                await this.client.commands.set(commandName, command)
-                await this.client.application.commands.create(command)
+                this.client.commands.set(commandName, command)
             }
         }
-    }
 
-    async attachCommandsToGuilds() {
-        if (!this.client.commands.size) return
-
-        await this.client.guilds.fetch()
-
-        for (const guild of this.client.guilds.cache.map((g) => g)) {
-            const commands = [...this.client.commands.values()]
-            await guild.commands.set(commands)
+        for (const [_, guild] of this.client.guilds.cache) {
+            await guild.commands.set([...this.client.commands.values()])
         }
     }
 
-    async updateCommandLocales() {}
-
-    async handleEvents(eventsFolder: string, eventManager: Siringo | Database<ICustomGuildOptions>) {
+    public async handleEvents(eventsFolder: string, eventManager: any) {
         if (!this._isFolderValid(eventsFolder)) return
 
         for (const eventFile of readdirSync(eventsFolder)) {
@@ -56,18 +43,18 @@ export class Handler {
             if (!this._isFileValid(eventFilePath)) continue
 
             const eventFileURL = pathToFileURL(eventFilePath).toString()
-            const { event }: { event: TEvent } = await import(eventFileURL)
+            const { event }: { event: TEventFunction } = await import(eventFileURL)
             const eventName = eventFile.split('.')[0]
-            const eventOnce = eventFile.split('.').at(-2) == 'once'
+            const eventOnce = eventFile.split('.').at(-2) === 'once'
 
-            if (eventOnce) eventManager.once(eventName, (...args: unknown[]) => event(this.client, ...args))
-            else eventManager.on(eventName, (...args: unknown[]) => event(this.client, ...args))
+            if (eventOnce) eventManager.once(eventName, async (...args: unknown[]) => event(this.client, ...args))
+            else eventManager.on(eventName, async (...args: unknown[]) => event(this.client, ...args))
         }
     }
 
     private _isFolderValid(folderPath: string) {
         return (
-            !!folderPath &&
+            Boolean(folderPath) &&
             existsSync(folderPath) &&
             lstatSync(folderPath).isDirectory() &&
             readdirSync(folderPath).length > 0
@@ -76,18 +63,18 @@ export class Handler {
 
     private _isFileValid(filePath: string) {
         return (
-            !!filePath &&
+            Boolean(filePath) &&
             existsSync(filePath) &&
             ['.js', '.ts'].includes(extname(filePath)) &&
             statSync(filePath).size > 0
         )
     }
 
-    private async _isCommandValid(command: ICommand) {
+    private _isCommandValid(command: ICommand) {
         return (
-            !!command &&
-            ['name', 'description', 'run'].every((p) => Object.keys(command).includes(p)) &&
-            typeof command.run == 'function'
+            Boolean(command) &&
+            ['name', 'description', 'run'].every((_) => Object.keys(command).includes(_)) &&
+            typeof command.run === 'function'
         )
     }
 }

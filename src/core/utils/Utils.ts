@@ -1,18 +1,22 @@
-import { Siringo } from '../Siringo.js'
-
+import { promises } from 'node:fs'
+import type { Interaction, InteractionReplyOptions, Message } from 'discord.js'
+import type { Siringo } from '../Siringo.js'   
+ 
 export class Utils {
-    constructor(public client: Siringo) {}
+    public constructor(public client: Siringo) {}
 
-    sleep(ms: number): Promise<NodeJS.Timeout> {
-        return new Promise((r) => setTimeout(r, ms))
+    public async sleep(ms: number) {  
+        return new Promise((resolve) => { 
+            setTimeout(resolve, ms)
+        })
     }
 
-    declension(count: number, words: string[]) {
+    public declension(count: number, words: string[]) {
         if (!count || count < 0 || !words.length) return ''
 
-        count = Math.abs(count) % 100
-        const counted = count % 10
-        const count10to20 = count % 100
+        const number = Math.abs(count) % 100
+        const counted = number % 10
+        const count10to20 = number % 100
 
         switch (words.length) {
             // Russian, Polish, English and others with 3 declensions
@@ -27,11 +31,12 @@ export class Utils {
                     return words[2]
                 }
             }
+
             // Czech, Slovenian and Lithuanian declension
             case 4: {
-                if (count === 1) {
+                if (number === 1) {
                     return words[0]
-                } else if (count >= 2 && count <= 4) {
+                } else if (number >= 2 && number <= 4) {
                     return words[1]
                 } else if (count10to20 >= 10 && count10to20 <= 20) {
                     return words[2]
@@ -45,16 +50,31 @@ export class Utils {
         }
     }
 
-    isEmoji(emoji: string) {
-        const RE_DISCORD_EMOJI = /(<a?)?:\w+:(\d{18}>)?/
-        const RE_UNICODE_EMOJI = new RegExp(
-            '(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])'
-        )
-
-        return RE_UNICODE_EMOJI.test(emoji) || RE_DISCORD_EMOJI.test(emoji)
+    public getMessageURL(message: Message<true>) {
+        return `https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}`
     }
 
-    getCurrentTime() {
+    public isDefaultEmoji(emoji: string): boolean {
+        return /\u00A9|\u00AE|[\u2000-\u3300]|\uD83C[\uD000-\uDFFF]|\uD83D[\uD000-\uDFFF]|\uD83E[\uD000-\uDFFF]/.test(
+            emoji
+        )
+    }
+
+    public isGuildEmoji(emoji: string): boolean {
+        return /<a?:\w+:\d+>/.test(emoji)
+    }
+
+    public isEmoji(emoji: string) {
+        return this.isDefaultEmoji(emoji) || this.isGuildEmoji(emoji)
+    }
+
+    public resolveEmojiId(emoji: string): string | null {
+        if (this.isDefaultEmoji(emoji)) return emoji
+        if (this.isGuildEmoji(emoji)) return emoji.replace(/<a?:\w+:(\d+)>/, '$1')
+        return null
+    }
+
+    public getCurrentTime() {
         const now = new Date()
         const options: Intl.DateTimeFormatOptions = {
             timeZone: 'Europe/Moscow',
@@ -66,5 +86,28 @@ export class Utils {
             year: '2-digit'
         }
         return new Intl.DateTimeFormat('ru-RU', options).format(now)
+    }
+
+    public getRespondFunction(interaction: Interaction) {
+        return async (data: InteractionReplyOptions, timeout?: number): Promise<void> => {
+            if (!interaction.isAutocomplete() && interaction.deferred) {
+                await interaction.editReply(data).catch((error) => this.client.logger.error(error))
+                return
+            }
+
+            if (interaction.isRepliable()) {
+                await interaction.reply(data).catch((error) => this.client.logger.error(error))
+
+                if (timeout)
+                    setTimeout(async () => {
+                        await interaction.deleteReply().catch((error) => this.client.logger.error(error))
+                    }, timeout)
+            }
+        }
+    }
+
+    public async importJsonFile<T>(filePath: string): Promise<T> {
+        const fileContents = await promises.readFile(filePath, 'utf8')
+        return JSON.parse(fileContents)
     }
 }

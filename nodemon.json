@@ -1,5 +1,6 @@
 {
     "exec": "ts-node src/index.ts",
     "ext": "ts,json,env",
-    "ignore": ["node_modules", "build"]
+    "ignore": ["node_modules", "dist"],
+    "signal": "SIGINT"
 }

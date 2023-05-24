@@ -1,24 +1,42 @@
 {
-    "ts-node": {
-        "swc": true,
-        "esm": true,
-        "experimentalResolverFeatures": true
-    },
+    // Mapped from https://www.typescriptlang.org/tsconfig
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "resolveJsonModule": true,
-        "outDir": "dist",
-        "removeComments": true,
-        "importHelpers": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "allowSyntheticDefaultImports": true,
-        "moduleDetection": "auto",
+        // Type Checking
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
         "strict": true,
         "useUnknownInCatchVariables": true,
+
+        // Modules
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+
+        // Emit
+        "inlineSources": true,
+        "newLine": "lf",
+        "noEmitHelpers": true,
+        "outDir": "dist",
+        "removeComments": false,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+
+        // Language and Environment
+        "experimentalDecorators": true,
+        "lib": ["ESNext"],
+        "target": "ES2018",
+        "useDefineForClassFields": true,
         "skipLibCheck": true
+    },
+    "ts-node": {
+        "esm": true,
+        "experimentalResolver": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]

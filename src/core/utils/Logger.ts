@@ -1,12 +1,14 @@
 import colors from 'colors'
-import { Siringo } from '../Siringo.js'
+import type { Siringo } from '../Siringo.js'
 
 export class Logger {
     private readonly ip: string
+
     private readonly wp: string
+
     private readonly ep: string
 
-    constructor(public client: Siringo) {
+    public constructor(public client: Siringo) {
         const botName = client.constructor.name
         const { magenta, red, yellow } = colors
 
@@ -16,21 +18,29 @@ export class Logger {
     }
 
     public info(message: string | unknown) {
-        if (message) return console.log(this._parseStrings(message, this.ip))
+        if (message) {
+            console.log(this._parseStrings(message, this.ip, 'info'))
+        }
     }
 
     public warn(message: unknown[]) {
-        if (message) return console.log(this._parseStrings(message, this.wp))
+        if (message) {
+            console.log(this._parseStrings(message, this.wp, 'warn'))
+        }
     }
 
     public error(error: unknown) {
-        if (!error) return console.log(this._parseStrings(error, this.ep))
+        if (!error) {
+            console.log(this._parseStrings(error, this.ep, 'error'))
+        }
     }
 
-    private _parseStrings(message: unknown, prefix: string): string {
+    private _parseStrings(message: unknown, prefix: string, type: 'error' | 'info' | 'warn' = 'info'): string {
+        const color = type === 'error' ? colors.red : type === 'warn' ? colors.yellow : colors.green
+
         const time = this.client.utils.getCurrentTime()
-        if (typeof message == 'string') return `[${prefix}] [${time}] ${message}`
+        if (typeof message === 'string') return `[${prefix}] [${time}] ${color(message)}`
         const splitStrings = JSON.stringify(message, null, 4).split('\n')
-        return splitStrings.map((s) => `[${prefix}] [${time}] ${s}`).join('\n')
+        return splitStrings.map((str) => `[${prefix}] [${time}] ${color(str)}`).join('\n')
     }
 }
