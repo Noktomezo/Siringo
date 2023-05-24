@@ -36,7 +36,7 @@ dependencies:
     version: 7.2.0
   quick.db:
     specifier: github:plexidev/quick.db#dev
-    version: github.com/plexidev/quick.db/1ba042a7c4fe850cb9e77da63efc1e43a0924a49(mongoose@7.2.0)
+    version: github.com/plexidev/quick.db/d9e0e9caf6f74674c79326d299403134b952c910(mongoose@7.2.0)
   utf-8-validate:
     specifier: ^6.0.3
     version: 6.0.3
@@ -7154,9 +7154,9 @@ packages:
       ffmpeg-static: 5.1.0
     dev: false
 
-  github.com/plexidev/quick.db/1ba042a7c4fe850cb9e77da63efc1e43a0924a49(mongoose@7.2.0):
-    resolution: {tarball: https://codeload.github.com/plexidev/quick.db/tar.gz/1ba042a7c4fe850cb9e77da63efc1e43a0924a49}
-    id: github.com/plexidev/quick.db/1ba042a7c4fe850cb9e77da63efc1e43a0924a49
+  github.com/plexidev/quick.db/d9e0e9caf6f74674c79326d299403134b952c910(mongoose@7.2.0):
+    resolution: {tarball: https://codeload.github.com/plexidev/quick.db/tar.gz/d9e0e9caf6f74674c79326d299403134b952c910}
+    id: github.com/plexidev/quick.db/d9e0e9caf6f74674c79326d299403134b952c910
     name: quick.db
     version: 9.1.6
     engines: {node: '>=14.0.0'}

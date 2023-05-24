@@ -29,6 +29,8 @@ export class Database extends QuickDB<ICustomGuildSettings> {
     }
 
     public async update(guildIdResolvable?: GuildIdResolvable, value?: ICustomGuildSettings): Promise<void> {
+        this.client.logger.info(this.client.locales.get('DATABASE_UPDATING', this.client.locales.defaultLocale))
+
         if (guildIdResolvable) {
             const guildId = resolveGuildId(guildIdResolvable)
             const guild = this.client.guilds.cache.get(guildId)
@@ -37,16 +39,19 @@ export class Database extends QuickDB<ICustomGuildSettings> {
             const guildData = (await this.get(guildId)) ?? this.defaults
             const repairedData = this._repairSettings(value ?? guildData)
             if (repairedData !== guildData) await this.set(guildId, repairedData)
+            this.client.logger.info(this.client.locales.get('DATABASE_UPDATED', this.client.locales.defaultLocale))
+            return
         }
 
         const guildSettingsList = await this.all()
-        if (!guildSettingsList.length) return
 
         for (const guildId of this.client.guilds.cache.keys()) {
             const guildData = guildSettingsList.find((gs) => gs.id === guildId)?.value ?? this.defaults
             const repairedData = this._repairSettings(guildData)
             if (repairedData !== guildData) await this.set(guildId, repairedData)
         }
+
+        this.client.logger.info(this.client.locales.get('DATABASE_UPDATED', this.client.locales.defaultLocale))
     }
 
     private _repairSettings(settings?: Partial<ICustomGuildSettings>): ICustomGuildSettings {
