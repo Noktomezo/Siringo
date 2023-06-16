@@ -1,90 +1,92 @@
-import { existsSync, lstatSync, readdirSync } from 'node:fs'
+import { readFileSync, existsSync, lstatSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import { Collection, Locale } from 'discord.js'
 import type { Snowflake } from 'discord.js'
-import { Collection } from 'discord.js'
 import type { GuildIdResolvable } from 'distube'
 import { resolveGuildId } from 'distube'
-import type { TLocale } from '../../typings/index.js'
+import type { TLocale, TMappedLocale } from '../../types.js'
 import type { Siringo } from '../Siringo.js'
 
 export class LocaleManager {
-    private readonly locales: Collection<string, TLocale>
+    private readonly _locales: Collection<string, TMappedLocale>
 
-    private readonly cache: Collection<Snowflake, TLocale>
+    private readonly _cache: Collection<Snowflake, TMappedLocale>
 
-    public constructor(public client: Siringo, public defaultLocale: string) {
-        this.locales = new Collection<string, TLocale>()
-        this.cache = new Collection<Snowflake, TLocale>()
+    private _default: TMappedLocale | undefined
+
+    public constructor(public client: Siringo, public defaultLocale: Locale = Locale.EnglishUS) {
+        this._locales = new Collection<string, TMappedLocale>()
+        this._cache = new Collection<Snowflake, TMappedLocale>()
     }
 
-    public async load(localeFolderPath: string) {
-        if (!this._isFolderValid(localeFolderPath)) return
+    public get default() {
+        return this._default as TMappedLocale
+    }
 
-        for (const localeFile of readdirSync(localeFolderPath)) {
-            if (!this._isLocaleFileNameValid(localeFile)) return
+    public async load(folder: string) {
+        if (!this._isFolderValid(folder)) return
 
-            const localeFileURL = join(localeFolderPath, localeFile)
-            const locale = await this.client.utils.importJsonFile<TLocale>(localeFileURL)
+        for (const localeFile of readdirSync(folder)) {
+            if (!this._isLocaleFileNameValid(localeFile)) continue
 
-            this.locales.set(localeFile.split('.')[0], locale)
+            const localeFilePath = join(folder, localeFile)
+            if (this._isFileEmptyOrInvalidJSON(localeFilePath)) continue
+            const locale = this.client.utils.importJSON<TLocale>(localeFilePath)
+            const mappedLocale = this._jsonToMap(locale)
+            this._locales.set(localeFile.split('.')[0], mappedLocale)
         }
+
+        this._default = this._locales.get(this.defaultLocale)
     }
 
-    public async updateGuildLocales() {
-        const guildsAllData = await this.client.database.all()
-        if (!guildsAllData.length) return
-
-        for (const [guildId] of this.client.guilds.cache) {
-            const DBGuildData = guildsAllData.find((gld) => gld.id === guildId)?.value
-            if (!DBGuildData) continue
-
-            const localeCode = DBGuildData.locale ?? 'en-US'
-            const locale = this.locales.get(localeCode) as TLocale
-
-            this.cache.set(guildId, locale)
-            await this.updateCommandsLocale(guildId)
-        }
-    }
-
-    public async updateCommandsLocale(guildIdResolvable: GuildIdResolvable) {
+    public get(guildIdResolvable: GuildIdResolvable) {
         const guildId = resolveGuildId(guildIdResolvable)
-        if (!guildId) return
-        const guild = this.client.guilds.cache.get(guildId)
-        if (!guild?.commands.cache.size) return
+        if (!this.client.guilds.cache.has(guildId)) return this.default as TMappedLocale
 
-        for (const command of guild.commands.cache.values()) {
-            await guild.commands.edit(command, {
-                description: this.get(command.description, guildId),
-                options: command.options.map((opt) => ({
-                    ...opt,
-                    description: this.get(opt.description, guildId)
-                }))
-            })
-        }
+        return this._cache.get(guildId)
     }
 
-    public get(localeKey: string, resolver: GuildIdResolvable | string): string {
-        if (typeof resolver === 'string' && this._isLocaleCodeValid(resolver)) {
-            const locale = this.locales.get(resolver) as TLocale
-            return locale[localeKey] ?? localeKey
-        } else {
-            const guildId = resolveGuildId(resolver)
-            if (!guildId) return 'UNKNOWN'
+    private _isFileEmptyOrInvalidJSON(filePath: string) {
+        try {
+            const fileContents = readFileSync(filePath, 'utf8')
+            if (fileContents.trim() === '') {
+                return true
+            }
 
-            const locale = this.cache.get(guildId) as TLocale
-            return locale[localeKey] ?? localeKey
+            JSON.parse(fileContents)
+            return false
+        } catch {
+            return true
         }
     }
 
     private _isFolderValid(folder: string) {
-        return existsSync(folder) && lstatSync(folder).isDirectory() && readdirSync(folder).length > 0
+        return this._isFolder(folder) && readdirSync(folder).length > 0
     }
 
-    private _isLocaleCodeValid(code: string) {
-        return /[a-z]{2}(?:-[A-Z]{2})?/.test(code)
+    private _jsonToMap(json: TLocale) {
+        const map = new Map<string, string>()
+
+        // Iterate over the properties of the JSON object
+        for (const key in json) {
+            if (Object.hasOwn(json, key)) {
+                const value = json[key]
+                map.set(key, value)
+            }
+        }
+
+        return map
+    }
+
+    private _isFolder(folder: string) {
+        return existsSync(folder) && lstatSync(folder).isDirectory()
+    }
+
+    private _isLocaleCode(code: string) {
+        return Object.values(Locale).includes(code as Locale)
     }
 
     private _isLocaleFileNameValid(name: string) {
-        return /[a-z]{2}(?:-[A-Z]{2})?\.json/.test(name)
+        return /^(.+)\.json$/.test(name)
     }
 }

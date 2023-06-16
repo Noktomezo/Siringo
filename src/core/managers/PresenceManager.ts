@@ -17,9 +17,7 @@ export class PresenceManager {
         if (!isActivityValid) return
 
         const guilds = await this.client.guilds.fetch()
-        const guildDeclensions = this.client.locales
-            .get('DECLENSION_GUILDS', this.client.locales.defaultLocale)
-            .split(':')
+        const guildDeclensions = this.client.locales.default!.get('DECLENSION_GUILDS')!.split(':')
         const guildDeclension = this.client.utils.declension(guilds.size, guildDeclensions)
         const name = presence.activities![0].name!.replace('{GUILDS}', `${guilds.size.toString()} ${guildDeclension}`)
 

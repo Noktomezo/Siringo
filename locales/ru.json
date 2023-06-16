@@ -1,0 +1,29 @@
+{
+    "LOGGED_IN": "Успешный вход от имени {BOT_TAG}",
+    "DATABASE_UPDATING": "Обновление баз данных...",
+    "DATABASE_UPDATED": "База данных обновлена",
+
+    "INVALID_MESSAGE_ID": "Аргумент **{MESSAGE_ID}** не является `ID` сообщения",
+    "MESSAGE_NOT_FOUND": "Сообщение с `ID` **{MESSAGE_ID}** не найдено в этом канале",
+    "INVALID_EMOJI": "Аргумент `{EMOJI} не является `эмодзи`",
+    "EMOJI_NOT_FOUND": "Указанный эмодзи {EMOJI} не найден или не принадлежит этому серверу",
+
+    "ADD_REACTION_ROLE_DESCRIPTION": "Прикрепить к сообщению реакцию, при нажатии на которую будет выдана определенная роль",
+    "ADD_REACTION_ROLE_MESSAGE_OPTION": "ID сообщения, к которому будет прикреплена роль по нажатию",
+    "ADD_REACTION_ROLE_EMOJI_OPTION": "Эмодзи, который будет прикреплен к сообщению в качестве реакции",
+    "ADD_REACTION_ROLE_ROLE_OPTION": "Роль, которая будет выдаваться при нажатии на реакцию",
+    "ADD_REACTION_ROLE_TYPE_OPTION": "Тип роли (1 - по-умолчанию, 2 - можно взять только одну роль)",
+    "ADD_REACTION_ROLE_EXISTS": "Роль по нажатию с эмодзи {EMOJI} уже прикреплена к сообщению с ID **{MESSAGE_ID}**",
+    "ADD_REACTION_ROLE_INVALID_TYPE": "Тип роли по нажатию может быть только **1** или **2**",
+    "ADD_REACTION_ROLE_DIFFERENT_TYPE": "К указанному сообщению уже прикреплены роли по нажатию с типом **{TYPE}**",
+    "ADD_REACTION_ROLE_SUCCESS": "Теперь при нажатии на реакцию {EMOJI} [этого]({MESSAGE_URL}) сообщения будет выдаваться роль {ROLE}",
+
+    "RM_REACTION_ROLE_DESCRIPTION": "Открепить реакцию с сообщения и забрать все выданные роли",
+    "RM_REACTION_ROLE_MESSAGE_OPTION": "Сообщение, с которого будет откреплена реакция",
+    "RM_REACTION_ROLE_EMOJI_OPTION": "Эмодзи реакции, которая будет откреплена",
+    "RM_REACTION_ROLE_NO_REACTION_ROLES": "К указанному сообщению еще не прикреплены роли по нажатию",
+    "RM_REACTION_ROLE_NOT_EXISTS": "Указанный эмодзи {EMOJI} не прикреплен к указанному сообщению в качестве реакции роли по нажатию",
+    "RM_REACTION_ROLE_SUCCESS": "С сообщения откреплена реакция по нажатию с эмодзи {EMOJI}, все соответствующие роли сняты",
+
+    "DECLENSION_GUILDS": "сервер:серверов:сервера"
+}

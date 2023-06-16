@@ -1,12 +1,12 @@
-import { promises } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import type { Interaction, InteractionReplyOptions, Message } from 'discord.js'
-import type { Siringo } from '../Siringo.js'   
- 
+import type { Siringo } from '../Siringo.js'
+
 export class Utils {
     public constructor(public client: Siringo) {}
 
-    public async sleep(ms: number) {  
-        return new Promise((resolve) => { 
+    public async sleep(ms: number) {
+        return new Promise((resolve) => {
             setTimeout(resolve, ms)
         })
     }
@@ -85,7 +85,7 @@ export class Utils {
             month: '2-digit',
             year: '2-digit'
         }
-        return new Intl.DateTimeFormat('ru-RU', options).format(now)
+        return new Intl.DateTimeFormat(this.client.locales.defaultLocale, options).format(now)
     }
 
     public getRespondFunction(interaction: Interaction) {
@@ -106,8 +106,8 @@ export class Utils {
         }
     }
 
-    public async importJsonFile<T>(filePath: string): Promise<T> {
-        const fileContents = await promises.readFile(filePath, 'utf8')
-        return JSON.parse(fileContents)
+    public importJSON<T>(filePath: string): T {
+        const fileContents = readFileSync(filePath, 'utf8')
+        return JSON.parse(fileContents) as T
     }
 }

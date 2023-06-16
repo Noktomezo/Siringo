@@ -3,10 +3,10 @@ import type { Siringo } from '../../core/Siringo.js'
 
 export const event = async (client: Siringo) => {
     await client.database.update()
-    await client.locales.updateGuildLocales()
+    // await client.locales.updateGuildLocales()
 
-    const loggedInMessage = client.locales.get('LOGGED_IN', client.locales.defaultLocale)
-    client.logger.info(loggedInMessage.replace('{BOT_TAG}', client.user.tag))
+    const loggedInMessage = client.locales.default.get('LOGGED_IN')
+    client.logger.info(loggedInMessage!.replace('{BOT_TAG}', client.user.tag))
 
     client.presences.add('dnd', { name: '/help', type: ActivityType.Watching })
     client.presences.add('dnd', { name: '/play', type: ActivityType.Listening })

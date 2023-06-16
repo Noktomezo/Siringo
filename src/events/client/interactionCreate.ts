@@ -1,6 +1,6 @@
 import type { ChatInputCommandInteraction } from 'discord.js'
 import type { Siringo } from '../../core/Siringo.js'
-import type { ICustomGuildSettings } from '../../typings/index.js'
+import type { IDatabaseGuildSettings } from '../../types.js'
 
 export const event = async (client: Siringo, interaction: ChatInputCommandInteraction) => {
     if (!interaction.guild) return
@@ -8,8 +8,8 @@ export const event = async (client: Siringo, interaction: ChatInputCommandIntera
     const command = client.commands.get(interaction.commandName)
     if (!command) return
 
-    const settings = (await client.database.get(interaction.guild.id)) as ICustomGuildSettings
-    const translate = (localeKey: string) => client.locales.get(localeKey, interaction.guild!) ?? localeKey
+    const settings = (await client.database.get(interaction.guild.id)) as IDatabaseGuildSettings
+    const translate = (localeKey: string) => client.locales.get(interaction.guild!)!.get(localeKey) ?? localeKey
     const respond = client.utils.getRespondFunction(interaction)
 
     await command

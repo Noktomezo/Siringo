@@ -1,0 +1,29 @@
+{
+    "LOGGED_IN": "Successfully logged in as {BOT_TAG}",
+    "DATABASE_UPDATING": "Updating the database...",
+    "DATABASE_UPDATED": "The database has been updated",
+
+    "INVALID_MESSAGE_ID": "The **{MESSAGE_ID}** argument does not look like a message `ID`",
+    "MESSAGE_NOT_FOUND": "Message with `ID` **{MESSAGE_ID}** not found in this channel",
+    "INVALID_EMOJI": "The **{EMOJI}** argument is not an `emoji`",
+    "EMOJI_NOT_FOUND": "The specified emoji {EMOJI} was not found or does not belong to this guild",
+
+    "ADD_REACTION_ROLE_DESCRIPTION": "Attach a reaction to the message, on clicking on which a certain role will be given",
+    "ADD_REACTION_ROLE_MESSAGE_OPTION": "The ID of the message to which the reaction reaction will be attached",
+    "ADD_REACTION_ROLE_EMOJI_OPTION": "Emoji to be attached to the message as a reaction",
+    "ADD_REACTION_ROLE_ROLE_OPTION": "The role that will be given when you click on the reaction",
+    "ADD_REACTION_ROLE_TYPE_OPTION": "Type of role (1 - by default, 2 - you can take only one role)",
+    "ADD_REACTION_ROLE_EXISTS": "The reaction-role with the {EMOJI} emoji is already attached to the message with ID **{MESSAGE_ID}**",
+    "ADD_REACTION_ROLE_INVALID_TYPE": "The reaction-role type can only be **1** or **2**",
+    "ADD_REACTION_ROLE_DIFFERENT_TYPE": "Reaction-roles with the type **{TYPE}** are already attached to the specified message",
+    "ADD_REACTION_ROLE_SUCCESS": "Now when you click on {EMOJI} reaction of [this]({MESSAGE_URL}) message, the {ROLE} role will be given",
+
+    "RM_REACTION_ROLE_DESCRIPTION": "Detach the reaction from the message and take away all given roles",
+    "RM_REACTION_ROLE_MESSAGE_OPTION": "The message from which the reaction will be detached",
+    "RM_REACTION_ROLE_EMOJI_OPTION": "Emoji of the reaction that will be detached",
+    "RM_REACTION_ROLE_NO_REACTION_ROLES": "The reaction-roles have not yet been attached to the specified message",
+    "RM_REACTION_ROLE_NOT_EXISTS": "The specified emoji {EMOJI} is not attached to the specified message as a reaction-role reaction",
+    "RM_REACTION_ROLE_SUCCESS": "Reaction role with emoji {EMOJI} is detached from the message, all associated roles are removed",
+
+    "DECLENSION_GUILDS": "guild:guilds:guilds"
+}

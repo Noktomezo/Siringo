@@ -7,7 +7,8 @@
     "scripts": {
         "start": "node dist/index.js",
         "start:dev": "nodemon",
-        "build": "tsc"
+        "build": "tsc",
+        "update": "yarn upgrade-interactive"
     },
     "keywords": [
         "bot",
@@ -18,33 +19,37 @@
     "author": "Noktomezo <noktomezo@duck.com>",
     "license": "ISC",
     "dependencies": {
-        "@discordjs/voice": "^0.14.0",
-        "@keyv/mongo": "^2.1.8",
+        "@discordjs/voice": "^0.16.0",
+        "@keyv/mongo": "^2.2.8",
         "@swc/cli": "^0.1.62",
+        "@swc/core": "^1.3.64",
         "bufferutil": "^4.0.7",
         "colors": "^1.4.0",
-        "discord.js": "^14.7.1",
+        "discord.js": "^14.11.0",
         "distube": "^4.0.4",
         "ffmpeg-static": "^5.1.0",
+        "keyv": "^4.5.2",
         "libsodium-wrappers": "^0.7.11",
-        "lodash": "^4.17.21",
-        "mongoose": "^7.2.0",
-        "quick.db": "github:plexidev/quick.db#dev",
+        "lodash-es": "^4.17.21",
         "utf-8-validate": "^6.0.3",
         "zlib-sync": "^0.1.8"
     },
     "devDependencies": {
-        "@types/lodash": "^4.14.194",
-        "@types/node": "^18.14.2",
-        "discord-api-types": "^0.37.35",
-        "dotenv": "^16.0.3",
-        "eslint": "^8.40.0",
+        "@commitlint/cli": "^17.6.5",
+        "@commitlint/config-conventional": "^17.6.5",
+        "@types/lodash-es": "^4",
+        "@types/node": "^18.16.18",
+        "discord-api-types": "^0.37.45",
+        "dotenv": "^16.3.0",
+        "eslint": "^8.42.0",
         "eslint-config-neon": "^0.1.47",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.2.2",
         "nodemon": "^2.0.22",
-        "prettier": "^2.8.4",
-        "quicktype": "^23.0.30",
+        "prettier": "^2.8.8",
+        "quicktype": "^23.0.48",
         "ts-node": "^10.9.1",
-        "tslib": "^2.5.0",
-        "typescript": "^5.0.4"
-    }
+        "typescript": "^5.1.3"
+    },
+    "packageManager": "yarn@3.6.0"
 }

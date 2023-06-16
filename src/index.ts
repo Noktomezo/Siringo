@@ -1,11 +1,10 @@
 import process from 'node:process'
-import { GatewayIntentBits, Partials } from 'discord.js'
+import { GatewayIntentBits, Locale, Partials } from 'discord.js'
 import { Siringo } from './core/Siringo.js'
 import 'dotenv/config'
 
 const client = new Siringo({
-    defaultPrefix: process.env.DEFAULT_PREFIX ?? '?',
-    defaultLocale: process.env.DEFAULT_LOCALE ?? 'en-US',
+    defaultLocale: Locale.EnglishUS,
     mongoURL: process.env.MONGO_URL ?? 'abc123',
     partials: Object.values(Partials) as Partials[],
     intents: Object.values(GatewayIntentBits) as GatewayIntentBits[]

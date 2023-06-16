@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { Role, TextChannel } from 'discord.js'
-import type { ICommand, ICommandBuildOptions } from '../../typings/index.js'
+import type { ICommand, ICommandBuildOptions, IReactionRoleOptions } from '../../types.js'
 
 export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
     return {
@@ -51,7 +51,7 @@ export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
             const role = interaction.options.getRole('role') as Role
             const type = interaction.options.getNumber('type')
             const channel = interaction.channel as TextChannel
-            const guildData = await client.database.get(interaction.guild!.id)
+            const RRData = await client.database.get<IReactionRoleOptions[]>(`${interaction.guild!.id}.reactionRoles`)
 
             await interaction.deferReply()
 
@@ -111,8 +111,23 @@ export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
                 return
             }
 
+            if (RRData?.some((rr) => rr.emojiId === emojiId && rr.messageId === messageIdString)) {
+                await respond({
+                    embeds: [
+                        {
+                            color: 0xff1f4f,
+                            description: translate('ADD_REACTION_ROLE_EXISTS')
+                                .replace('{EMOJI}', emojiString)
+                                .replace('{MESSAGE_ID}', messageIdString)
+                        }
+                    ],
+                    ephemeral: true
+                })
+                return
+            }
+
             if (type) {
-                const existingType = guildData?.reactionRoles?.find((rr) => rr.messageId === messageIdString)?.type
+                const existingType = RRData?.find((rr) => rr.messageId === messageIdString)?.type
 
                 if (![1, 2].includes(type)) {
                     await respond({

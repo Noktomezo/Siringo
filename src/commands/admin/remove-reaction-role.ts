@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { Role, TextChannel } from 'discord.js'
-import type { ICommand, ICommandBuildOptions } from '../../typings/index.js'
+import type { ICommand, ICommandBuildOptions, IReactionRoleOptions } from '../../types.js'
 
 export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
     return {
@@ -25,7 +25,7 @@ export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
             const messageIdString = interaction.options.getString('message-id')!
             const emojiString = interaction.options.getString('emoji')!
             const channel = interaction.channel as TextChannel
-            const data = await client.database.get(interaction.guild!.id)
+            const RRData = await client.database.get<IReactionRoleOptions[]>(`${interaction.guild!.id}.reactionRoles`)
 
             await interaction.deferReply()
 
@@ -57,7 +57,7 @@ export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
                 return
             }
 
-            const reactionRolesOnMessage = data?.reactionRoles.filter((rr) => rr.messageId === message.id)
+            const reactionRolesOnMessage = RRData!.filter((rr) => rr.messageId === message.id)
             if (!reactionRolesOnMessage?.length) {
                 await respond({
                     embeds: [
@@ -103,7 +103,7 @@ export const buildCommand = (buildOptions: ICommandBuildOptions): ICommand => {
                     embeds: [
                         {
                             color: 0xff1f4f,
-                            description: translate('RM_REACTION_ROLE_NO_SAME_REACTION').replace('{EMOJI}', emojiString)
+                            description: translate('RM_REACTION_ROLE_NOT_EXISTS').replace('{EMOJI}', emojiString)
                         }
                     ]
                 })

@@ -1,9 +1,8 @@
 import { existsSync, lstatSync, readdirSync, statSync } from 'node:fs'
 import { extname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import type { ICommand, TCommandBuilder, TEventFunction } from '../../typings/index.js'
+import type { ICommand, TCommandBuilder, TEventFunction } from '../../types.js'
 import type { Siringo } from '../Siringo.js'
-import type { Database } from './Database.js'
 
 export class Handler {
     public constructor(public client: Siringo) {}

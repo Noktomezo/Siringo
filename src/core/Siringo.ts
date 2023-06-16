@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import { dirname, join } from 'node:path'
+import { cwd } from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { Client, Collection } from 'discord.js'
-import type { ICommand, ISiringoOptions } from '../typings/index.js'
+import type { ICommand, IDatabaseGuildSettings, ISiringoOptions } from '../types.js'
 import { LocaleManager } from './managers/LocaleManager.js'
 import { PresenceManager } from './managers/PresenceManager.js'
 import { ReactionRoleManager } from './managers/ReactionRoleManager.js'
@@ -16,13 +17,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export class Siringo extends Client<true> {
     private readonly handler: Handler
 
-    public defaultPrefix: string
-
     public logger: Logger
 
     public utils: Utils
 
-    public database: Database
+    public database: Database<IDatabaseGuildSettings>
 
     public presences: PresenceManager
 
@@ -34,13 +33,16 @@ export class Siringo extends Client<true> {
 
     public constructor(options: ISiringoOptions) {
         super(options)
-        this.defaultPrefix = options.defaultPrefix
 
         this.commands = new Collection<string, ICommand>()
 
         this.locales = new LocaleManager(this, options.defaultLocale)
 
-        this.database = new Database(this, options.mongoURL)
+        this.database = new Database<IDatabaseGuildSettings>(this, options.mongoURL, {
+            locale: options.defaultLocale,
+            reactionRoles: [],
+            privateChannels: []
+        })
         this.presences = new PresenceManager(this)
         this.reactionRoles = new ReactionRoleManager(this)
 
@@ -50,16 +52,13 @@ export class Siringo extends Client<true> {
     }
 
     public async init(token: string) {
-        const localesFolderPath = join(__dirname, '..', 'locales')
+        const localesFolderPath = join(cwd(), 'locales')
         const commandsFolderPath = join(__dirname, '..', 'commands')
         const clientEventsFolderPath = join(__dirname, '..', 'events', 'client')
-        const databaseEventsFolderPath = join(__dirname, '..', 'events', 'database')
         // const musicEventsFolderPath = path.join(__dirname, '..', 'events', 'music')
-        await this.database.init()
 
         await this.locales.load(localesFolderPath)
         await this.handler.handleEvents(clientEventsFolderPath, this)
-        await this.handler.handleEvents(databaseEventsFolderPath, this.database)
         //
         await this.login(token)
         await this.handler.handleCommands(commandsFolderPath)

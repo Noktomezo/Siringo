@@ -13,7 +13,7 @@ import type {
     UserResolvable
 } from 'discord.js'
 import { Collection } from 'discord.js'
-import type { ICustomGuildSettings, IReactionRoleOptions } from '../../typings/index.js'
+import type { IDatabaseGuildSettings, IReactionRoleOptions } from '../../types.js'
 import type { Siringo } from '../Siringo.js'
 
 export class ReactionRoleManager {
@@ -44,7 +44,7 @@ export class ReactionRoleManager {
 
         await foundMessage.react(emojiId)
 
-        const data = (await this.client.database.get(foundMessage.guild.id)) as ICustomGuildSettings
+        const data = (await this.client.database.get(foundMessage.guild.id)) as IDatabaseGuildSettings
         data.reactionRoles.push({
             messageId: foundMessage.id,
             channelId: foundMessage.channel.id,
@@ -111,6 +111,7 @@ export class ReactionRoleManager {
     }
 
     public async handleMessageReactionAdd(reaction: MessageReaction, user: User) {
+        if (user.bot) return
         if (reaction.message.partial) await reaction.message.fetch()
 
         const member = reaction.message.guild?.members.resolve(user)
