@@ -30,14 +30,10 @@
         // Language and Environment
         "experimentalDecorators": true,
         "lib": ["ESNext"],
-        "target": "ES2018",
+        "target": "ESNext",
         "useDefineForClassFields": true,
         "skipLibCheck": true
     },
-    "ts-node": {
-        "esm": true,
-        "experimentalResolver": true
-    },
-    "include": ["src/**/*.ts"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]
 }

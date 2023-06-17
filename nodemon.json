@@ -1,6 +1,6 @@
 {
-    "exec": "ts-node src/index.ts",
+    "exec": "tsx src/index.ts",
     "ext": "ts,json,env",
-    "ignore": ["node_modules", "dist"],
+    "ignore": ["node_modules", "dist", ".yarn", ".husky"],
     "signal": "SIGINT"
 }
