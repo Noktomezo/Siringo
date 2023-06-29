@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path'
 import { cwd } from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { Client, Collection } from 'discord.js'
-import type { ICommand, IDatabaseGuildSettings, ISiringoOptions } from '../types.js'
+import type { ICommand, IDatabaseGuildSettings, ISiringoOptions, TLocalizedCommandsCollection } from '../types.js'
 import { LocaleManager } from './managers/LocaleManager.js'
 import { PresenceManager } from './managers/PresenceManager.js'
 import { ReactionRoleManager } from './managers/ReactionRoleManager.js'
@@ -15,7 +15,7 @@ import { Utils } from './utils/Utils.js'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export class Siringo extends Client<true> {
-    private readonly handler: Handler
+    public handler: Handler
 
     public logger: Logger
 
@@ -31,10 +31,14 @@ export class Siringo extends Client<true> {
 
     public commands: Collection<string, ICommand>
 
+    public localizedCommands: TLocalizedCommandsCollection
+
     public constructor(options: ISiringoOptions) {
         super(options)
 
         this.commands = new Collection<string, ICommand>()
+
+        this.localizedCommands = new Collection<string, Collection<string, ICommand>>()
 
         this.locales = new LocaleManager(this, options.defaultLocale)
 
@@ -59,9 +63,9 @@ export class Siringo extends Client<true> {
 
         await this.locales.load(localesFolderPath)
         await this.handler.handleEvents(clientEventsFolderPath, this)
-        //
-        await this.login(token)
         await this.handler.handleCommands(commandsFolderPath)
+
+        await this.login(token)
         // await this.handler.handleEvents(musicEventsFolderPath, this.player)
     }
 }

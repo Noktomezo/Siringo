@@ -1,5 +1,5 @@
 {
-    "exec": "tsx src/index.ts",
+    "exec": "node --loader @swc-node/register/esm src/index.ts",
     "ext": "ts,json,env",
     "ignore": ["node_modules", "dist", ".yarn", ".husky"],
     "signal": "SIGINT"

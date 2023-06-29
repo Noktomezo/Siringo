@@ -4,7 +4,7 @@ import { Collection, Locale } from 'discord.js'
 import type { Snowflake } from 'discord.js'
 import type { GuildIdResolvable } from 'distube'
 import { resolveGuildId } from 'distube'
-import type { TLocale, TMappedLocale } from '../../types.js'
+import type { IDatabaseGuildSettings, TLocale, TMappedLocale } from '../../types.js'
 import type { Siringo } from '../Siringo.js'
 
 export class LocaleManager {
@@ -17,6 +17,10 @@ export class LocaleManager {
     public constructor(public client: Siringo, public defaultLocale: Locale = Locale.EnglishUS) {
         this._locales = new Collection<string, TMappedLocale>()
         this._cache = new Collection<Snowflake, TMappedLocale>()
+    }
+
+    public get allowed() {
+        return [...this._locales.keys()]
     }
 
     public get default() {
@@ -37,13 +41,24 @@ export class LocaleManager {
         }
 
         this._default = this._locales.get(this.defaultLocale)
+
+        const allDatabaseGuildSettings = await this.client.database.getAll()
+        for (const guild of this.client.guilds.cache.values()) {
+            const guildSettings = allDatabaseGuildSettings.get(guild.id) as IDatabaseGuildSettings
+            const guildLocale = this._locales.get(guildSettings.locale) as TMappedLocale
+            this._cache.set(guild.id, guildLocale)
+        }
     }
 
     public get(guildIdResolvable: GuildIdResolvable) {
         const guildId = resolveGuildId(guildIdResolvable)
-        if (!this.client.guilds.cache.has(guildId)) return this.default as TMappedLocale
+        if (!this.client.guilds.cache.has(guildId)) return this.default
 
-        return this._cache.get(guildId)
+        return this._cache.get(guildId) ?? this.default
+    }
+
+    public getByCode(localeCode: string) {
+        return this._locales.get(localeCode) as TMappedLocale
     }
 
     private _isFileEmptyOrInvalidJSON(filePath: string) {
@@ -80,10 +95,6 @@ export class LocaleManager {
 
     private _isFolder(folder: string) {
         return existsSync(folder) && lstatSync(folder).isDirectory()
-    }
-
-    private _isLocaleCode(code: string) {
-        return Object.values(Locale).includes(code as Locale)
     }
 
     private _isLocaleFileNameValid(name: string) {

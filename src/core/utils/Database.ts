@@ -1,4 +1,4 @@
-import { Collection } from 'discord.js'
+import { Collection, Events } from 'discord.js'
 import type { GuildIdResolvable } from 'distube'
 import { resolveGuildId } from 'distube'
 import Keyv from 'keyv'
@@ -13,13 +13,14 @@ export class Database<V extends object> {
     public constructor(public client: Siringo, private readonly url: string, public defaults: V) {
         this._keyv = new Keyv<V>(url)
         this._cache = new Collection<string, V>()
+        this.client.once(Events.ClientReady, async () => this.update())
     }
 
     public async set(key: string, value: V, ttl?: number) {
         if (this._isDotNotationPath(key)) {
             const pathParts = this._fixDotNotationPath(key).split('.')
             const objectKey = pathParts.at(0) as string
-            const objectValuePath = pathParts.slice(0, 1).join('.')
+            const objectValuePath = pathParts.slice(1).join('.')
 
             const data = this._cache.get(objectKey) ?? (await this._keyv.get(objectKey))
             set(data, objectValuePath, value)
@@ -45,7 +46,7 @@ export class Database<V extends object> {
         if (this._isDotNotationPath(key)) {
             const pathParts = this._fixDotNotationPath(key).split('.')
             const objectKey = pathParts.at(0) as string
-            const objectValuePath = pathParts.slice(0, 1).join('.')
+            const objectValuePath = pathParts.slice(1).join('.')
 
             const data = this._cache.get(objectKey) ?? (await this._keyv.get(objectKey))
             return get(data, objectValuePath)

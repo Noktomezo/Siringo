@@ -4,7 +4,8 @@ import type {
     Snowflake,
     ChatInputApplicationCommandData,
     InteractionReplyOptions,
-    Locale
+    Locale,
+    Collection
 } from 'discord.js'
 import type { Siringo } from './core/Siringo.js'
 
@@ -60,3 +61,5 @@ export type TMappedLocale = Map<string, string>
 export type TTranslateFunction = (localeKey: string) => string
 
 export type TRespondFunction = (data: InteractionReplyOptions, timeout?: number) => Promise<void>
+
+export type TLocalizedCommandsCollection = Collection<string, Collection<string, ICommand>>

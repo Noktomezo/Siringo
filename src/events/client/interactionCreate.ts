@@ -5,10 +5,11 @@ import type { IDatabaseGuildSettings } from '../../types.js'
 export const event = async (client: Siringo, interaction: ChatInputCommandInteraction) => {
     if (!interaction.guild) return
 
-    const command = client.commands.get(interaction.commandName)
+    const settings = (await client.database.get(interaction.guild.id)) as IDatabaseGuildSettings
+    const localizedCommands = client.localizedCommands.get(settings.locale)
+    const command = localizedCommands?.get(interaction.commandName)
     if (!command) return
 
-    const settings = (await client.database.get(interaction.guild.id)) as IDatabaseGuildSettings
     const translate = (localeKey: string) => client.locales.get(interaction.guild!)!.get(localeKey) ?? localeKey
     const respond = client.utils.getRespondFunction(interaction)
 

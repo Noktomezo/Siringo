@@ -1,7 +1,8 @@
 import { existsSync, lstatSync, readdirSync, statSync } from 'node:fs'
 import { extname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import type { ICommand, TCommandBuilder, TEventFunction } from '../../types.js'
+import { Collection } from 'discord.js'
+import type { ICommand, IDatabaseGuildSettings, TCommandBuilder, TEventFunction } from '../../types.js'
 import type { Siringo } from '../Siringo.js'
 
 export class Handler {
@@ -29,8 +30,33 @@ export class Handler {
             }
         }
 
-        for (const [_, guild] of this.client.guilds.cache) {
-            await guild.commands.set([...this.client.commands.values()])
+        for (const localeCode of this.client.locales.allowed) {
+            const localizedCommands = new Collection<string, ICommand>()
+            for (const command of this.client.commands.values()) {
+                const locale = this.client.locales.getByCode(localeCode)
+                const newCommand: ICommand = {
+                    ...command,
+                    description: locale.get(command.description) as string,
+                    options:
+                        command.options?.map((opt) => ({
+                            ...opt,
+                            description: locale.get(opt.description) as string
+                        })) ?? []
+                }
+                localizedCommands.set(command.name, newCommand)
+            }
+
+            this.client.localizedCommands.set(localeCode, localizedCommands)
+        }
+    }
+
+    public async updateGuildCommands() {
+        const allDatabaseGuildSettings = await this.client.database.getAll()
+
+        for (const guild of this.client.guilds.cache.values()) {
+            const settings = allDatabaseGuildSettings.get(guild.id) as IDatabaseGuildSettings
+            const guildCommands = this.client.localizedCommands.get(settings.locale)
+            void guild.commands.set([...guildCommands!.values()])
         }
     }
 

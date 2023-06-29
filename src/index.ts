@@ -4,7 +4,7 @@ import { Siringo } from './core/Siringo.js'
 import 'dotenv/config'
 
 const client = new Siringo({
-    defaultLocale: Locale.EnglishUS,
+    defaultLocale: (process.env.DEFAULT_LOCALE as Locale) ?? Locale.EnglishUS,
     mongoURL: process.env.MONGO_URL ?? 'abc123',
     partials: Object.values(Partials) as Partials[],
     intents: Object.values(GatewayIntentBits) as GatewayIntentBits[]

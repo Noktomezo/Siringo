@@ -85,6 +85,7 @@ export class Utils {
             month: '2-digit',
             year: '2-digit'
         }
+
         return new Intl.DateTimeFormat(this.client.locales.defaultLocale, options).format(now)
     }
 

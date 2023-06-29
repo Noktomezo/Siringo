@@ -28,19 +28,16 @@ export class PresenceManager {
         if (!this.presences.length) return
         await this.update(this.presences[0])
 
-        if (this.presences.length < 2) return
+        if (this.presences.length <= 1) return
 
-        let index = 1
-        const interval = setInterval(async () => {
+        for (let index = 0; index <= this.presences.length; index++) {
             if (index === this.presences.length) index = 0
 
             const presence = this.presences.at(index)
-
-            if (!presence) clearInterval(interval)
+            if (!presence) return
 
             await this.update(presence!)
-
-            index++
-        }, ms)
+            await this.client.utils.sleep(ms)
+        }
     }
 }

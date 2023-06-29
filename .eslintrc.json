@@ -11,7 +11,42 @@
         "no-restricted-globals": 0,
         "unicorn/no-unsafe-regex": 0,
         "no-template-curly-in-string": 0,
-        "prefer-named-capture-group": 0
+        "prefer-named-capture-group": 0,
+        "@typescript-eslint/naming-convention": [
+            "error",
+            {
+                "selector": "typeLike",
+                "format": ["PascalCase"]
+            },
+            {
+                "selector": "typeAlias",
+                "format": ["PascalCase"],
+                "custom": {
+                    "regex": "^T[A-Z].*$",
+                    "match": true
+                }
+            },
+            {
+                "selector": "interface",
+                "format": ["PascalCase"],
+                "custom": {
+                    "regex": "^I[A-Z].*$",
+                    "match": true
+                }
+            },
+            {
+                "selector": "variable",
+                "modifiers": ["const"],
+                "types": ["array"],
+                "format": null
+            },
+            {
+                "selector": "variable",
+                "types": ["array"],
+                "format": ["PascalCase"],
+                "prefix": ["Array"]
+            }
+        ]
     },
     "ignorePatterns": ["**/dist/*"]
 }

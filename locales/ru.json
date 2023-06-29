@@ -1,6 +1,6 @@
 {
     "LOGGED_IN": "Успешный вход от имени {BOT_TAG}",
-    "DATABASE_UPDATING": "Обновление баз данных...",
+    "DATABASE_UPDATING": "Обновление базы данных...",
     "DATABASE_UPDATED": "База данных обновлена",
 
     "INVALID_MESSAGE_ID": "Аргумент **{MESSAGE_ID}** не является `ID` сообщения",
